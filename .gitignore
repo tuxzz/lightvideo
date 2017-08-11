@@ -373,3 +373,9 @@ target_wrapper.*
 
 # QtCtreator CMake
 CMakeLists.txt.user*
+
+# debug temp file
+*.png
+*.bmp
+*.rcv
+*.db

@@ -1,0 +1,105 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Header">
+      <UniqueIdentifier>{7a59975e-0edf-4aaf-8332-b6070b317845}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source">
+      <UniqueIdentifier>{a6c21d75-0aef-45b0-a129-c45f6e15b35e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header\intern">
+      <UniqueIdentifier>{22372448-8b1b-4568-b27b-246fe4fe4f46}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\intern\lz4hc.c">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\intern\lz4.c">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\intern\util.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\intern\asynclz4.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\intern\intrafilter.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\intern\intrafilter_generic.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\intern\yuv.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\intern\yuv_generic.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\intern\yuv_vhfp.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\intern\resampler.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\intern\decoder.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\intern\decoderutil.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\intern\lz4.h">
+      <Filter>Header\intern</Filter>
+    </ClInclude>
+    <ClInclude Include="src\intern\lz4hc.h">
+      <Filter>Header\intern</Filter>
+    </ClInclude>
+    <ClInclude Include="src\intern\lz4opt.h">
+      <Filter>Header\intern</Filter>
+    </ClInclude>
+    <ClInclude Include="src\publicutil.h">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="src\intern\privateutil.hpp">
+      <Filter>Header\intern</Filter>
+    </ClInclude>
+    <ClInclude Include="src\asynclz4.h">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="src\intern\intrafilter_generic.hpp">
+      <Filter>Header\intern</Filter>
+    </ClInclude>
+    <ClInclude Include="src\intrafilter.h">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="src\intern\yuv_vhfp.hpp">
+      <Filter>Header\intern</Filter>
+    </ClInclude>
+    <ClInclude Include="src\intern\yuv_generic.hpp">
+      <Filter>Header\intern</Filter>
+    </ClInclude>
+    <ClInclude Include="src\yuv.h">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="src\resampler.hpp">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="src\decoder.h">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="src\intern\struct.hpp">
+      <Filter>Header\intern</Filter>
+    </ClInclude>
+    <ClInclude Include="src\intern\imagechannel.hpp">
+      <Filter>Header\intern</Filter>
+    </ClInclude>
+    <ClInclude Include="src\intern\decoderutil.hpp">
+      <Filter>Header\intern</Filter>
+    </ClInclude>
+    <ClInclude Include="src\intern\colorformat.hpp">
+      <Filter>Header\intern</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
