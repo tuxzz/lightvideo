@@ -3,6 +3,7 @@
 #include "../intrafilter.h"
 #include "colorformat.hpp"
 #include <algorithm>
+#include <cstring>
 
 namespace LightVideo
 {

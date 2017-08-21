@@ -140,6 +140,13 @@ int lvGetFrame8(LVDecoder *_decoder, uint8_t **outChannelList, uint32_t channelC
   DecoderImpl<uint8_t> *decoder = static_cast<DecoderImpl<uint8_t>*>(_decoder);
 
   int64_t origPos = decoder->io.pos();
+  goto skipFail;
+onFailed:
+  if(!_decoder->io.seek(origPos))
+    critical("Failed to recovery decoder status.");
+  return ResFailed;
+  
+skipFail:
   if(!decoder->packetLoaded)
   {
     // read header and check
@@ -174,7 +181,7 @@ int lvGetFrame8(LVDecoder *_decoder, uint8_t **outChannelList, uint32_t channelC
         critical("Video frame packet data is too short or broken.");
         goto onFailed;
       }
-      if(LZ4_decompress_safe(decoder->packetRawDataBuffer.data(), decoder->decompressedPacketBuffer.data(), vfpk.size, exceptedDecompressedSize) != exceptedDecompressedSize)
+      if(LZ4_decompress_safe(decoder->packetRawDataBuffer.data(), decoder->decompressedPacketBuffer.data(), vfpk.size, exceptedDecompressedSize) != static_cast<int>(exceptedDecompressedSize))
       {
         critical("Video frame packet data is too short or broken.");
         goto onFailed;
@@ -234,11 +241,6 @@ int lvGetFrame8(LVDecoder *_decoder, uint8_t **outChannelList, uint32_t channelC
 
   ++decoder->framePos;
   return ResSuccess;
-
-onFailed:
-  if(!decoder->io.seek(origPos))
-    critical("Failed to recovery decoder status.");
-  return ResFailed;
 }
 
 void lvDestroyDecoder(LVDecoder *decoder)

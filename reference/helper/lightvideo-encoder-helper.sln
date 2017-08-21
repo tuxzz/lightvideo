@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.26430.16
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lightvideo-encoder-helper", "lightvideo-encoder-helper.vcxproj", "{B8919362-90E6-4DA1-929F-DE51EA576656}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test", "..\test\test.vcxproj", "{7DF2F377-5273-432E-9D1B-C34A290BB19D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -19,6 +21,12 @@ Global
 		{B8919362-90E6-4DA1-929F-DE51EA576656}.Release|x64.ActiveCfg = Release|x64
 		{B8919362-90E6-4DA1-929F-DE51EA576656}.Release|x64.Build.0 = Release|x64
 		{B8919362-90E6-4DA1-929F-DE51EA576656}.Release|x86.ActiveCfg = Release|x64
+		{7DF2F377-5273-432E-9D1B-C34A290BB19D}.Debug|x64.ActiveCfg = Debug|x64
+		{7DF2F377-5273-432E-9D1B-C34A290BB19D}.Debug|x64.Build.0 = Debug|x64
+		{7DF2F377-5273-432E-9D1B-C34A290BB19D}.Debug|x86.ActiveCfg = Debug|x64
+		{7DF2F377-5273-432E-9D1B-C34A290BB19D}.Release|x64.ActiveCfg = Release|x64
+		{7DF2F377-5273-432E-9D1B-C34A290BB19D}.Release|x64.Build.0 = Release|x64
+		{7DF2F377-5273-432E-9D1B-C34A290BB19D}.Release|x86.ActiveCfg = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,7 +1,7 @@
-#include "privateutil.hpp"
+#include "util_p.hpp"
 #include <limits>
 
-namespace LightVideo
+namespace LightVideoDecoder
 {
   template<typename T>static inline void yuvp2rgbi(const T *LV_RESTRICT y, const T *LV_RESTRICT u, const T *LV_RESTRICT v, T *LV_RESTRICT rgb, int stride, int width, int height)
   {

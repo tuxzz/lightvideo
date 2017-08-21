@@ -11,50 +11,45 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\intern\asynclz4.cpp" />
-    <ClCompile Include="src\intern\decoder.cpp" />
-    <ClCompile Include="src\intern\decoderutil.cpp" />
-    <ClCompile Include="src\intern\intrafilter.cpp" />
-    <ClCompile Include="src\intern\lz4.c" />
-    <ClCompile Include="src\intern\lz4hc.c" />
-    <ClCompile Include="src\intern\resampler.cpp" />
-    <ClCompile Include="src\intern\util.cpp" />
-    <ClCompile Include="src\intern\yuv.cpp" />
+    <ClInclude Include="src\colorformat.hpp" />
+    <ClInclude Include="src\decoder.hpp" />
+    <ClInclude Include="src\error.hpp" />
+    <ClInclude Include="src\imagechannel.hpp" />
+    <ClInclude Include="src\intern\decoderimpl_p.hpp" />
+    <ClInclude Include="src\intern\decoder_p.hpp" />
+    <ClInclude Include="src\intern\defilter_avx2_p.hpp" />
+    <ClInclude Include="src\intern\defilter_dispatcher_p.hpp" />
+    <ClInclude Include="src\intern\defilter_generic_p.hpp" />
+    <ClInclude Include="src\intern\defilter_sse2_p.hpp" />
+    <ClInclude Include="src\intern\util_p.hpp" />
+    <ClInclude Include="src\intern\yuv.hpp" />
+    <ClInclude Include="src\intern\yuv_generic.hpp" />
+    <ClInclude Include="src\struct.hpp" />
+    <ClInclude Include="src\util.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\asynclz4.h" />
-    <ClInclude Include="src\decoder.h" />
-    <ClInclude Include="src\intern\colorformat.hpp" />
-    <ClInclude Include="src\intern\decoderutil.hpp" />
-    <ClInclude Include="src\intern\imagechannel.hpp" />
-    <ClInclude Include="src\intern\intrafilter_generic.hpp" />
-    <ClInclude Include="src\intern\privateutil.hpp" />
-    <ClInclude Include="src\intern\struct.hpp" />
-    <ClInclude Include="src\intern\yuv_generic.hpp" />
-    <ClInclude Include="src\intrafilter.h" />
-    <ClInclude Include="src\publicutil.h" />
-    <ClInclude Include="src\intern\lz4.h" />
-    <ClInclude Include="src\intern\lz4hc.h" />
-    <ClInclude Include="src\intern\lz4opt.h" />
-    <ClInclude Include="src\resampler.hpp" />
-    <ClInclude Include="src\yuv.h" />
+    <ClCompile Include="src\intern\colorformat.cpp" />
+    <ClCompile Include="src\intern\decoder.cpp" />
+    <ClCompile Include="src\intern\error.cpp" />
+    <ClCompile Include="src\intern\struct.cpp" />
+    <ClCompile Include="src\intern\util.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
-    <ProjectGuid>{B8919362-90E6-4DA1-929F-DE51EA576656}</ProjectGuid>
+    <ProjectGuid>{AEAC3191-5C8C-4412-83FD-475A79DCADF3}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>lightvideoencoderhelper</RootNamespace>
+    <RootNamespace>fastdecoder</RootNamespace>
     <WindowsTargetPlatformVersion>10.0.15063.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v141</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v141</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -65,61 +60,52 @@
   </ImportGroup>
   <ImportGroup Label="Shared">
   </ImportGroup>
-  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
-  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <LinkIncremental>true</LinkIncremental>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <LinkIncremental>false</LinkIncremental>
-  </PropertyGroup>
+  <PropertyGroup />
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <PrecompiledHeader>
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>_DEBUG;_WINDOWS;_USRDLL;LIGHTVIDEOENCODERHELPER_EXPORTS;%(PreprocessorDefinitions);_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
-      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions);_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
+      <AdditionalOptions>/utf-8 /Qvec-report:1 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
-      <ShowProgress>NotSet</ShowProgress>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
+      <WarningLevel>Level4</WarningLevel>
       <PrecompiledHeader>
       </PrecompiledHeader>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>NDEBUG;_WINDOWS;_USRDLL;LIGHTVIDEOENCODERHELPER_EXPORTS;%(PreprocessorDefinitions);_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
-      <AdditionalOptions>/utf-8 /Qvec-report:1 %(AdditionalOptions)</AdditionalOptions>
-      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions);_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <OmitFramePointers>true</OmitFramePointers>
       <StringPooling>true</StringPooling>
       <BufferSecurityCheck>false</BufferSecurityCheck>
       <ControlFlowGuard>false</ControlFlowGuard>
       <EnableParallelCodeGeneration>false</EnableParallelCodeGeneration>
+      <FloatingPointModel>Fast</FloatingPointModel>
       <FloatingPointExceptions>false</FloatingPointExceptions>
-      <CreateHotpatchableImage>false</CreateHotpatchableImage>
-      <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
+      <AdditionalOptions>/utf-8 /Qvec-report:1 %(AdditionalOptions)</AdditionalOptions>
+      <EnableEnhancedInstructionSet>AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
-      <SetChecksum>true</SetChecksum>
-      <ShowProgress>NotSet</ShowProgress>
     </Link>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

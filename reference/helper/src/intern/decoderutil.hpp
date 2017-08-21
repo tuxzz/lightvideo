@@ -12,7 +12,7 @@ namespace LightVideo
   bool verifyVFRM(const MainStruct &mainStruct, const VideoFrameStruct &vfrm);
 
   template<typename T>inline void defilterIntra(ImageChannel<T> &img, IntraPredictMode mode)
-  { static_assert(false, "Invalid T"); }
+  { static_assert(std::is_same<T, uint8_t>::value || std::is_same<T, uint16_t>::value, "Invalid T"); }
   template<>inline void defilterIntra<uint8_t>(ImageChannel<uint8_t> &img, IntraPredictMode mode)
   { defilterIntra8(img, mode); }
   template<>inline void defilterIntra<uint16_t>(ImageChannel<uint16_t> &img, IntraPredictMode mode)

@@ -80,7 +80,9 @@ class Encoder:
         self.flushQueue = []
         self.maxFlushQueueSize = multiprocessing.cpu_count() * 2
 
-    def __del__(self):
+    def __enter__(self):
+        return self
+    def __exit__(self, type, value, trace):
         with DelayedKeyboardInterrupt():
             self.flush(True)
             self.stream.seek(0)
@@ -98,30 +100,33 @@ class Encoder:
             mainStruct.nFrame = self.frameCount
             self.stream.write(mainStruct)
             self.stream.seek(0, io.SEEK_END)
+            self.stream.flush()
+
+    def __del__(self):
+        pass
 
     def flush(self, force = False):
         with DelayedKeyboardInterrupt():
-            if(self.onBufferFrameCount <= 0):
-                return
-            report.enter("async flush")
-            uncompressedData = self.packetBuffer.getvalue()
-            uncompressedDataSize = len(uncompressedData)
-            task = clz4.LZ4CompressionTask(uncompressedData, clz4.COMPRESS_MODE_HC, _LZ4_COMPRESSION_LEVEL, calcAdler32 = True)
-            del uncompressedData
+            if(self.onBufferFrameCount > 0):
+                report.enter("async flush")
+                uncompressedData = self.packetBuffer.getvalue()
+                uncompressedDataSize = len(uncompressedData)
+                task = clz4.LZ4CompressionTask(uncompressedData, clz4.COMPRESS_MODE_HC, _LZ4_COMPRESSION_LEVEL, calcAdler32 = True)
+                del uncompressedData
 
-            videoPacket = VideoFramePacket()
-            videoPacket.vfpk = b'VFPK'
-            videoPacket.nFrame = self.onBufferFrameCount
-            videoPacket.nFullrame = self.onBufferFullFrameCount
-            videoPacket.compressionMethod = COMPRESSION_LZ4
+                videoPacket = VideoFramePacket()
+                videoPacket.vfpk = b'VFPK'
+                videoPacket.nFrame = self.onBufferFrameCount
+                videoPacket.nFullrame = self.onBufferFullFrameCount
+                videoPacket.compressionMethod = COMPRESSION_LZ4
 
-            report.do("Enqueued a packet with %d full frame in %d frame" % (self.onBufferFrameCount, self.onBufferFullFrameCount))
-            self.packetBuffer = io.BytesIO()
-            self.onBufferFrameCount = 0
-            self.onBufferFullFrameCount = 0
+                report.do("Enqueued a packet with %d full frame in %d frame" % (self.onBufferFrameCount, self.onBufferFullFrameCount))
+                self.packetBuffer = io.BytesIO()
+                self.onBufferFrameCount = 0
+                self.onBufferFullFrameCount = 0
 
-            self.flushQueue.append((videoPacket, task, uncompressedDataSize))
-            report.leave()
+                self.flushQueue.append((videoPacket, task, uncompressedDataSize))
+                report.leave()
 
             report.enter("flush write back")
             while(len(self.flushQueue)):

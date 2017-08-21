@@ -22,16 +22,90 @@ struct LZ4CompressionTask
   bool cacheValid, calcAdler32;
 };
 
-static uint32_t doCalcAdler32(const char *LV_RESTRICT data, int dataSize)
+static inline void doAder_16(const uint8_t *data, uint_fast32_t &a, uint_fast32_t &b)
 {
-  uint32_t a = 1;
-  uint32_t b = 0;
-  for(int i = 0; i < dataSize; ++i)
+  a += data[0]; b += a;
+  a += data[1]; b += a;
+  a += data[2]; b += a;
+  a += data[3]; b += a;
+  a += data[4]; b += a;
+  a += data[5]; b += a;
+  a += data[6]; b += a;
+  a += data[7]; b += a;
+  a += data[8]; b += a;
+  a += data[9]; b += a;
+  a += data[10]; b += a;
+  a += data[11]; b += a;
+  a += data[12]; b += a;
+  a += data[13]; b += a;
+  a += data[14]; b += a;
+  a += data[15]; b += a;
+}
+
+static uint32_t doCalcAdler32(const uint8_t *data, int dataSize)
+{
+  /* 
+  This function is from zlib project.
+
+  interface of the 'zlib' general purpose compression library
+  version 1.2.11, January 15th, 2017
+  Copyright (C) 1995-2017 Jean-loup Gailly and Mark Adler
+  This software is provided 'as-is', without any express or implied
+  warranty.  In no event will the authors be held liable for any damages
+  arising from the use of this software.
+  Permission is granted to anyone to use this software for any purpose,
+  including commercial applications, and to alter it and redistribute it
+  freely, subject to the following restrictions:
+  1. The origin of this software must not be misrepresented; you must not
+  claim that you wrote the original software. If you use this software
+  in a product, an acknowledgment in the product documentation would be
+  appreciated but is not required.
+  2. Altered source versions must be plainly marked as such, and must not be
+  misrepresented as being the original software.
+  3. This notice may not be removed or altered from any source distribution.
+  Jean-loup Gailly        Mark Adler
+  jloup@gzip.org          madler@alumni.caltech.edu
+  The data format used by the zlib library is described by RFCs (Request for
+  Comments) 1950 to 1952 in the files http://tools.ietf.org/html/rfc1950
+  (zlib format), rfc1951 (deflate format) and rfc1952 (gzip format).
+  */
+
+  uint_fast32_t a = 1;
+  uint_fast32_t b = 0;
+
+  /* do length NMAX blocks -- requires just one modulo operation */
+  while (dataSize >= 5552)
   {
-    a = (a + data[i]) % 65521;
-    b = (b + a) % 65521;
+    dataSize -= 5552;
+    uint_fast32_t n = 5552 / 16;          /* NMAX is divisible by 16 */
+    do
+    {
+      doAder_16(data, a, b);          /* 16 sums unrolled */
+      data += 16;
+    } while (--n);
+    a %= 65521U;
+    b %= 65521U;
   }
-  return b * 65536 + a;
+
+  /* do remaining bytes (less than NMAX, still just one modulo) */
+  if(dataSize) /* avoid modulos if none remaining */
+  {
+    while(dataSize >= 16)
+    {
+      dataSize -= 16;
+      doAder_16(data, a, b);
+      data += 16;
+    }
+    while(dataSize--) {
+      a += *data++;
+      b += a;
+    }
+    a %= 65521U;
+    b %= 65521U;
+  }
+
+  /* return recombined sums */
+  return a + b * 65536;
 }
 
 static LZ4CompressionResult compressCore(char *src, int srcSize, int mode, int level, bool calcAdler32)
@@ -47,7 +121,7 @@ static LZ4CompressionResult compressCore(char *src, int srcSize, int mode, int l
 
   uint32_t checksum = 0;
   if(calcAdler32)
-    checksum = doCalcAdler32(dest, compressedSize);
+    checksum = doCalcAdler32(reinterpret_cast<uint8_t*>(dest), compressedSize);
 
   return {
     dest,
@@ -112,7 +186,7 @@ int lvWaitLZ4CompressionTask(LZ4CompressionTask *task, int msec)
   if(msec < 0)
     task->future.wait();
   else
-    status = task->future.wait_for(std::chrono::milliseconds::duration(msec));
+    status = task->future.wait_for(std::chrono::milliseconds(msec));
 
   return futureStatusToLvTaskStatus(status);
 }

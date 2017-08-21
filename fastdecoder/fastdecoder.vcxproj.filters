@@ -1,0 +1,78 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Header">
+      <UniqueIdentifier>{50ec139a-a5bb-40ef-bb18-a340d658effe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source">
+      <UniqueIdentifier>{ac713e01-0263-4707-80d1-c0d2f96f6f7a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header\intern">
+      <UniqueIdentifier>{fb26e4a3-2bc6-4cc4-891c-c688cbdaabe7}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\imagechannel.hpp">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="src\util.hpp">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="src\decoder.hpp">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="src\intern\util_p.hpp">
+      <Filter>Header\intern</Filter>
+    </ClInclude>
+    <ClInclude Include="src\struct.hpp">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="src\colorformat.hpp">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="src\intern\decoder_p.hpp">
+      <Filter>Header\intern</Filter>
+    </ClInclude>
+    <ClInclude Include="src\error.hpp">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="src\intern\decoderimpl_p.hpp">
+      <Filter>Header\intern</Filter>
+    </ClInclude>
+    <ClInclude Include="src\intern\defilter_generic_p.hpp">
+      <Filter>Header\intern</Filter>
+    </ClInclude>
+    <ClInclude Include="src\intern\defilter_dispatcher_p.hpp">
+      <Filter>Header\intern</Filter>
+    </ClInclude>
+    <ClInclude Include="src\intern\yuv_generic.hpp">
+      <Filter>Header\intern</Filter>
+    </ClInclude>
+    <ClInclude Include="src\intern\yuv.hpp">
+      <Filter>Header\intern</Filter>
+    </ClInclude>
+    <ClInclude Include="src\intern\defilter_sse2_p.hpp">
+      <Filter>Header\intern</Filter>
+    </ClInclude>
+    <ClInclude Include="src\intern\defilter_avx2_p.hpp">
+      <Filter>Header\intern</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\intern\util.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\intern\colorformat.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\intern\decoder.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\intern\struct.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\intern\error.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

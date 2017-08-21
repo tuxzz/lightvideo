@@ -170,7 +170,7 @@ namespace LightVideo
   void vPrintMessage(MessageCategory category, const char *msg, va_list args)
   {
     char buffer[16384] = {'\x00'};
-    int l = vsnprintf(buffer, sizeof(buffer), msg, args);
+    vsnprintf(buffer, sizeof(buffer), msg, args);
     fprintf(stderr, "%s\n", buffer);
 
     if(category == FatalMessage)

@@ -42,7 +42,7 @@ def speedtest():
     t = time.time() - t
     print("Decoded %lfs in %lfs, raito %lfx" % (totalTime, t, totalTime / t))
 
-profile.run("speedtest()")
+profile.run("main()")
 
 gc.collect()
 dll = ctypes.CDLL("lightvideo-encoder-helper.dll")

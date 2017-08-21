@@ -27,16 +27,7 @@
     <ClCompile Include="src\intern\intrafilter.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="src\intern\intrafilter_generic.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
     <ClCompile Include="src\intern\yuv.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="src\intern\yuv_generic.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="src\intern\yuv_vhfp.cpp">
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="src\intern\resampler.cpp">
@@ -73,9 +64,6 @@
     </ClInclude>
     <ClInclude Include="src\intrafilter.h">
       <Filter>Header</Filter>
-    </ClInclude>
-    <ClInclude Include="src\intern\yuv_vhfp.hpp">
-      <Filter>Header\intern</Filter>
     </ClInclude>
     <ClInclude Include="src\intern\yuv_generic.hpp">
       <Filter>Header\intern</Filter>

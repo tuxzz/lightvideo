@@ -24,14 +24,14 @@ lvDefilterSubLeft8.argtypes = [uint8_p_2d, ctypes.c_int, ctypes.c_int]
 lvDefilterSubLeft8.restype = None
 
 lvFilterSubAvg8 = dll.lvFilterSubAvg8
-lvFilterSubAvg8.argtypes = [uint8_p_2d, ctypes.c_int, ctypes.c_int, ctypes.c_ubyte, uint8_p]
+lvFilterSubAvg8.argtypes = [uint8_p_2d, ctypes.c_int, ctypes.c_int, ctypes.c_ubyte]
 lvFilterSubAvg8.restype = None
 lvDefilterSubAvg8 = dll.lvDefilterSubAvg8
 lvDefilterSubAvg8.argtypes = [uint8_p_2d, ctypes.c_int, ctypes.c_int]
 lvDefilterSubAvg8.restype = None
 
 lvFilterSubPaeth8 = dll.lvFilterSubPaeth8
-lvFilterSubPaeth8.argtypes = [uint8_p_2d, ctypes.c_int, ctypes.c_int, ctypes.c_ubyte, uint8_p]
+lvFilterSubPaeth8.argtypes = [uint8_p_2d, ctypes.c_int, ctypes.c_int, ctypes.c_ubyte]
 lvFilterSubPaeth8.restype = None
 lvDefilterSubPaeth8 = dll.lvDefilterSubPaeth8
 lvDefilterSubPaeth8.argtypes = [uint8_p_2d, ctypes.c_int, ctypes.c_int]
@@ -53,14 +53,14 @@ lvDefilterSubLeft16.argtypes = [uint16_p_2d, ctypes.c_int, ctypes.c_int]
 lvDefilterSubLeft16.restype = None
 
 lvFilterSubAvg16 = dll.lvFilterSubAvg16
-lvFilterSubAvg16.argtypes = [uint16_p_2d, ctypes.c_int, ctypes.c_int, ctypes.c_ubyte, uint16_p]
+lvFilterSubAvg16.argtypes = [uint16_p_2d, ctypes.c_int, ctypes.c_int, ctypes.c_ubyte]
 lvFilterSubAvg16.restype = None
 lvDefilterSubAvg16 = dll.lvDefilterSubAvg16
 lvDefilterSubAvg16.argtypes = [uint16_p_2d, ctypes.c_int, ctypes.c_int]
 lvDefilterSubAvg16.restype = None
 
 lvFilterSubPaeth16 = dll.lvFilterSubPaeth16
-lvFilterSubPaeth16.argtypes = [uint16_p_2d, ctypes.c_int, ctypes.c_int, ctypes.c_ubyte, uint16_p]
+lvFilterSubPaeth16.argtypes = [uint16_p_2d, ctypes.c_int, ctypes.c_int, ctypes.c_ubyte]
 lvFilterSubPaeth16.restype = None
 lvDefilterSubPaeth16 = dll.lvDefilterSubPaeth16
 lvDefilterSubPaeth16.argtypes = [uint16_p_2d, ctypes.c_int, ctypes.c_int]
@@ -79,9 +79,7 @@ def _callFilter(func8, func16, data, threshold):
         func = func16
     else:
         raise TypeError("Only uint8 or uint16 is supported")
-    if(len(func.argtypes) == 5):
-        func(out, width, height, threshold, None)
-    elif(len(func.argtypes) == 4):
+    if(len(func.argtypes) == 4):
         func(out, width, height, threshold)
     else:
         assert False, "Bad ctypes function"

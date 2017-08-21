@@ -27,7 +27,7 @@ template<typename T>void lvMontionResmpleImpl(const T *LV_RESTRICT src, int widt
       int mappedX = clip(0, (j + halfDiffW - moveX) * width / nScaledW, width - 1);
       int mappedY = clip(0, (i + halfDiffH - moveY) * height / nScaledH, height - 1);
       T ref = src[mappedY * height + mappedX];
-      out[i * height + j]= ref;
+      out[i * height + j] = ref;
     }
   }
 }

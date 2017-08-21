@@ -1,6 +1,8 @@
 #pragma once
 
+#include <cstddef>
 #define LV_RESTRICT __restrict
+
 
 #ifdef LIGHTVIDEOENCODERHELPER_EXPORTS
 #define LIGHTVIDEO_EXPORT __declspec(dllexport)

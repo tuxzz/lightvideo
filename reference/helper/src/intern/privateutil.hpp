@@ -33,6 +33,27 @@
 
 #define GUARDED_ALLOC(t, n) LightVideo::lvAlloc< t >(n, __FILE__, __func__, __LINE__);
 
+#if (defined(__AVX2__) || defined( __AVX__ ) || defined(_M_AMD64) || defined(_M_X64) || _M_IX86_FP == 2)
+#ifndef __SSE2__
+#define __SSE2__
+#endif
+#ifndef __SSE__
+#define __SSE__
+#endif
+#endif
+
+#if _M_IX86_FP == 1
+#ifndef __SSE__
+#define __SSE__
+#endif
+#endif
+
+#if defined(_MSC_VER)
+#define LV_ALIGNED(x) __declspec(align(x))
+#elif defined(__GNUC__)
+#define LV_ALIGNED(x) __attribute__ ((aligned(x)))
+#endif
+
 namespace LightVideo
 {
   template<typename T>static inline T *lvAlloc(size_t n, const char *file, const char *func, int line)
@@ -50,7 +71,7 @@ namespace LightVideo
   template<typename T>static inline T absDrop(T x, T dropOrigin, T dropDst)
   {
     if(std::abs(x) - dropOrigin <= dropDst)
-      return blockOrigin;
+      return dropOrigin;
     return x;
   }
 
