@@ -57,6 +57,9 @@
     <ClInclude Include="src\intern\defilter_avx2_p.hpp">
       <Filter>Header\intern</Filter>
     </ClInclude>
+    <ClInclude Include="src\intern\interleave_p.hpp">
+      <Filter>Header\intern</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\intern\util.cpp">
@@ -72,6 +75,9 @@
       <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="src\intern\error.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
+    <ClCompile Include="src\intern\decoderimpl.cpp">
       <Filter>Source</Filter>
     </ClCompile>
   </ItemGroup>

@@ -40,17 +40,13 @@ namespace LightVideoDecoder
     uint32_t currentFrameNumber() const;
     bool isCurrentFrameDecoded() const;
 
-    template<typename T>inline const ImageChannel<T> &getCurrentFrame(uint32_t iChannel) const
-    {
-      static_assert(std::is_same<T, uint8_t>::value, "Unsupported dtype.");
-      return *static_cast<const ImageChannel<T>*>(nullptr);
-    }
+    uint32_t getCurrentFrameFS() const;
+    uint32_t getCurrentFrameHS() const;
 
   private:
     /* func */
     void loadPacket();
     void loadFrame();
-    const ImageChannel<uint8_t> &getCurrentFrame8(uint32_t iChannel) const;
     ReadFunc m_read;
     SeekFunc m_seek;
     PosFunc m_pos;
@@ -72,7 +68,4 @@ namespace LightVideoDecoder
     /* private */
     DecoderPrivate *m_dptr;
   };
-
-  template<>inline const ImageChannel<uint8_t> &Decoder::getCurrentFrame<uint8_t>(uint32_t iChannel) const
-  { return getCurrentFrame8(iChannel); }
 } // namespace LightVideoDecoder

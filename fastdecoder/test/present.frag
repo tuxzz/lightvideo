@@ -1,7 +1,7 @@
 #version 400 core
 noperspective in vec3 vertPos;
 noperspective in vec2 texCoord;
-uniform sampler2D texY, texU, texV;
+uniform sampler2D texFS, texHS;
 out vec4 color;
 
 const mat3 yuvrgbMat = mat3(
@@ -19,9 +19,8 @@ vec3 convertYUVToRGB(vec3 yuv)
 
 void main()
 {
-  float y = texture(texY, texCoord).r;
-  float u = texture(texU, texCoord).r;
-  float v = texture(texV, texCoord).r;
-  vec3 rgb = convertYUVToRGB(vec3(y, u, v));
+  float y = texture(texFS, texCoord).x;
+  vec2 uv = texture(texHS, texCoord).xy;
+  vec3 rgb = convertYUVToRGB(vec3(y, uv.r, uv.g));
   color = vec4(rgb.r, rgb.g, rgb.b, 1.0f);
 }

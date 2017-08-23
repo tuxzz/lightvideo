@@ -189,10 +189,8 @@ namespace LightVideoDecoder
     }
   }
 
-  const ImageChannel<uint8_t> &Decoder::getCurrentFrame8(uint32_t iChannel) const
-  {
-    lvdAssert(m_currentFrameDecoded, "Frame is not decoded.");
-    return static_cast<DecoderImpl<uint8_t>*>(m_dptr)->currentChannelList(iChannel);
-  }
-
+  uint32_t Decoder::getCurrentFrameFS() const
+  { return static_cast<DecoderImpl<uint8_t>*>(m_dptr)->currentTextureFS(); }
+  uint32_t Decoder::getCurrentFrameHS() const
+  { return static_cast<DecoderImpl<uint8_t>*>(m_dptr)->currentTextureHS(); }
 } // namespace LightVideoDecoder

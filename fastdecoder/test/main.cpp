@@ -4,12 +4,15 @@
 #include <cmath>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <iostream>
 
 using namespace LightVideoDecoder;
-
+static int vw = 1280;
+static int vh = 720;
 static void framebufferSizeCallback(GLFWwindow *, int width, int height)
 {
-  glViewport(0, 0, width, height);
+  vw = width;
+  vh = height;
 }
 
 static void speedtest(Decoder &dec)
@@ -40,20 +43,20 @@ static const char *presentVert =
 "layout (location = 0) in vec3 inPos;\n"
 "layout (location = 1) in vec2 inTexCoord;\n"
 "noperspective out vec3 vertPos;\n"
-"noperspective out vec2 atexCoord;\n"
+"noperspective out vec2 texCoord;\n"
 "\n"
 "void main()\n"
 "{\n"
 "  vertPos = inPos;\n"
-"  atexCoord = inTexCoord;\n"
+"  texCoord = inTexCoord;\n"
 "  gl_Position = vec4(inPos.x, inPos.y, inPos.z, 1.0);\n"
 "}";
 
 static const char *presentFrag =
 "#version 400 core\n"
 "noperspective in vec3 vertPos;\n"
-"noperspective in vec2 atexCoord;\n"
-"uniform sampler2D texY, texU, texV;\n"
+"noperspective in vec2 texCoord;\n"
+"uniform sampler2D texFS, texHS;\n"
 "out vec4 color;\n"
 "\n"
 "const mat3 yuvrgbMat = mat3(\n"
@@ -71,39 +74,14 @@ static const char *presentFrag =
 "\n"
 "void main()\n"
 "{\n"
-"  vec2 texCoord = vec2(atexCoord.x + 0.25, atexCoord.y - 0.0);\n"
-"  float y = texture(texY, texCoord).r;\n"
-"  float u = texture(texU, texCoord).r;\n"
-"  float v = texture(texV, texCoord).r;\n"
-"  vec3 rgb = convertYUVToRGB(vec3(y, u, v));\n"
+"  float y = texture(texFS, texCoord).x;\n"
+"  vec2 uv = texture(texHS, texCoord).xy;\n"
+"  vec3 rgb = convertYUVToRGB(vec3(y, uv.r, uv.g));\n"
 "  color = vec4(rgb.r, rgb.g, rgb.b, 1.0f);\n"
 "}";
 
-static void play(Decoder &dec)
-{
-  /* initialize */
-  glfwInit();
-  glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
-  glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-  GLFWwindow* window = glfwCreateWindow(dec.width(), dec.height(), "LightPlay", nullptr, nullptr);
-  if(!window)
-  {
-    fprintf(stderr, "Failed to create GLFW window\n");
-    glfwTerminate();
-    std::abort();
-  }
-  glfwMakeContextCurrent(window);
-  if(!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-  {
-    fprintf(stderr, "Failed to initialize GLAD.\n");
-    std::abort();
-  }
-
-  glViewport(0, 0, dec.width(), dec.height());
-  glfwSwapInterval(1);
-  glfwSetFramebufferSizeCallback(window, framebufferSizeCallback);
-  
+static void play(GLFWwindow *window, Decoder &dec)
+{ 
   GLuint vertShader, fragShader;
   vertShader = glCreateShader(GL_VERTEX_SHADER);
   fragShader = glCreateShader(GL_FRAGMENT_SHADER);
@@ -158,22 +136,6 @@ static void play(Decoder &dec)
   glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), reinterpret_cast<void*>(3 * sizeof(float)));
   glEnableVertexAttribArray(1);
   
-  GLuint texY, texU, texV;
-  glGenTextures(1, &texY);
-  glGenTextures(1, &texU);
-  glGenTextures(1, &texV);
-
-  glBindTexture(GL_TEXTURE_2D, texY);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-  glBindTexture(GL_TEXTURE_2D, texU);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-  glBindTexture(GL_TEXTURE_2D, texV);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-  glUseProgram(presentProgram);
   dec.seekFrame(0);
   dec.decodeCurrentFrame();
   auto start = std::chrono::steady_clock::now();
@@ -181,6 +143,7 @@ static void play(Decoder &dec)
   {
     double duration = static_cast<double>(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - start).count()) / 1e3;
     uint32_t nowFrame = static_cast<uint32_t>(std::fmod(duration, dec.duration()) * static_cast<double>(dec.framerate()));
+    //uint32_t nowFrame = (dec.currentFrameNumber() + 1) % dec.frameCount();
     while(dec.currentFrameNumber() < nowFrame)
     {
       dec.nextFrame();
@@ -192,33 +155,21 @@ static void play(Decoder &dec)
       dec.seekFrame(0);
       dec.decodeCurrentFrame();
     }
-
-    {
-      glBindTexture(GL_TEXTURE_2D, texY);
-      const auto &channel = dec.getCurrentFrame<uint8_t>(0);
-      glTexImage2D(GL_TEXTURE_2D, 0, GL_R8, channel.width(), channel.height(), 0, GL_RED, GL_UNSIGNED_BYTE, channel.data());
-    }
-    {
-      glBindTexture(GL_TEXTURE_2D, texU);
-      const auto &channel = dec.getCurrentFrame<uint8_t>(1);
-      glTexImage2D(GL_TEXTURE_2D, 0, GL_R8, channel.width(), channel.height(), 0, GL_RED, GL_UNSIGNED_BYTE, channel.data());
-    }
-    {
-      glBindTexture(GL_TEXTURE_2D, texV);
-      const auto &channel = dec.getCurrentFrame<uint8_t>(2);
-      glTexImage2D(GL_TEXTURE_2D, 0, GL_R8, channel.width(), channel.height(), 0, GL_RED, GL_UNSIGNED_BYTE, channel.data());
-    }
-
+    GLuint texFS = dec.getCurrentFrameFS();
+    GLuint texHS = dec.getCurrentFrameHS();
+    glViewport(0, 0, vw, vh);
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, texY);
+    glBindTexture(GL_TEXTURE_2D, texFS);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glActiveTexture(GL_TEXTURE1);
-    glBindTexture(GL_TEXTURE_2D, texU);
-    glActiveTexture(GL_TEXTURE2);
-    glBindTexture(GL_TEXTURE_2D, texV);
+    glBindTexture(GL_TEXTURE_2D, texHS);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-    glUniform1i(glGetUniformLocation(presentProgram, "texY"), 0);
-    glUniform1i(glGetUniformLocation(presentProgram, "texU"), 1);
-    glUniform1i(glGetUniformLocation(presentProgram, "texV"), 2);
+    glUseProgram(presentProgram);
+    glUniform1i(glGetUniformLocation(presentProgram, "texFS"), 0);
+    glUniform1i(glGetUniformLocation(presentProgram, "texHS"), 1);
 
     glBindVertexArray(vaoRect);
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
@@ -229,9 +180,72 @@ static void play(Decoder &dec)
   glfwTerminate();
 }
 
+void glDebugOutput(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar *message, const void *userParam)
+{
+  if(id == 131169 || id == 131185 || id == 131218 || id == 131204) return; 
+
+  std::cout << "---------------" << std::endl;
+  std::cout << "Debug message (" << id << "): " <<  message << std::endl;
+
+  switch (source)
+  {
+  case GL_DEBUG_SOURCE_API:             std::cout << "Source: API"; break;
+  case GL_DEBUG_SOURCE_WINDOW_SYSTEM:   std::cout << "Source: Window System"; break;
+  case GL_DEBUG_SOURCE_SHADER_COMPILER: std::cout << "Source: Shader Compiler"; break;
+  case GL_DEBUG_SOURCE_THIRD_PARTY:     std::cout << "Source: Third Party"; break;
+  case GL_DEBUG_SOURCE_APPLICATION:     std::cout << "Source: Application"; break;
+  case GL_DEBUG_SOURCE_OTHER:           std::cout << "Source: Other"; break;
+  } std::cout << std::endl;
+
+  switch (type)
+  {
+  case GL_DEBUG_TYPE_ERROR:               std::cout << "Type: Error"; break;
+  case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR: std::cout << "Type: Deprecated Behaviour"; break;
+  case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR:  std::cout << "Type: Undefined Behaviour"; break; 
+  case GL_DEBUG_TYPE_PORTABILITY:         std::cout << "Type: Portability"; break;
+  case GL_DEBUG_TYPE_PERFORMANCE:         std::cout << "Type: Performance"; break;
+  case GL_DEBUG_TYPE_MARKER:              std::cout << "Type: Marker"; break;
+  case GL_DEBUG_TYPE_PUSH_GROUP:          std::cout << "Type: Push Group"; break;
+  case GL_DEBUG_TYPE_POP_GROUP:           std::cout << "Type: Pop Group"; break;
+  case GL_DEBUG_TYPE_OTHER:               std::cout << "Type: Other"; break;
+  } std::cout << std::endl;
+
+  switch (severity)
+  {
+  case GL_DEBUG_SEVERITY_HIGH:         std::cout << "Severity: high"; break;
+  case GL_DEBUG_SEVERITY_MEDIUM:       std::cout << "Severity: medium"; break;
+  case GL_DEBUG_SEVERITY_LOW:          std::cout << "Severity: low"; break;
+  case GL_DEBUG_SEVERITY_NOTIFICATION: std::cout << "Severity: notification"; break;
+  } std::cout << std::endl;
+  std::cout << std::endl;
+}
+
 int main()
 {
-  FILE *f = fopen("D:/codebase/lightvideo/reference/out.rcv", "rb");
+  /* initialize opengl */
+  glfwInit();
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
+  glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+  glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
+  GLFWwindow* window = glfwCreateWindow(1280, 720, "LightPlay", nullptr, nullptr);
+  if(!window)
+  {
+    fprintf(stderr, "Failed to create GLFW window\n");
+    glfwTerminate();
+    std::abort();
+  }
+  glfwMakeContextCurrent(window);
+  if(!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+  {
+    fprintf(stderr, "Failed to initialize GLAD.\n");
+    std::abort();
+  }
+  glfwSwapInterval(1);
+  glfwSetFramebufferSizeCallback(window, framebufferSizeCallback);
+  glDebugMessageCallback(glDebugOutput, nullptr);
+  glDebugMessageControl(GL_DEBUG_SOURCE_API, GL_DEBUG_TYPE_ERROR, GL_DEBUG_SEVERITY_HIGH, 0, nullptr, GL_TRUE); 
+  FILE *f = fopen("D:/codebase/lightvideo/reference/classroom.rcv", "rb");
   Decoder::SeekFunc seek = [=](int64_t pos) {
     if(fseek(f, static_cast<long>(pos), SEEK_SET))
       throw IOError("Failed to seek.");
@@ -249,8 +263,9 @@ int main()
   };
 
   Decoder *dec = new Decoder(read, seek, pos);
-  play(*dec);
+  //speedtest(*dec);
+  play(window, *dec);
   delete dec;
-  //system("pause");
+  system("pause");
   return 0;
 }
