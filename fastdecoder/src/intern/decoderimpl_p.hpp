@@ -159,10 +159,7 @@ namespace LightVideoDecoder
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
         glViewport(0, 0, m_mainStruct.width, m_mainStruct.height);
-        if(vfrm.movePredictValueX == 0 && vfrm.movePredictValueY == 0 && vfrm.scalePredictValue == 0)
-          drawNMS();
-        else
-          lvdAssert(false, "unsupported format");
+        drawNMS();
 
         glBindTexture(GL_TEXTURE_2D, m_texHS[2]);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
@@ -185,10 +182,7 @@ namespace LightVideoDecoder
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
         glViewport(0, 0, std::max(1U, m_mainStruct.width / 2), std::max(1U, m_mainStruct.height / 2));
-        if(vfrm.movePredictValueX == 0 && vfrm.movePredictValueY == 0 && vfrm.scalePredictValue == 0)
-          drawNMS();
-        else
-          lvdAssert(false, "unsupported format");
+        drawNMS();
 
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
         glDeleteFramebuffers(1, &gBuffer);

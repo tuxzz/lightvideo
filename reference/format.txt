@@ -5,11 +5,11 @@ MainStruct
     0005-0006 ColorType(uint8)
         0x00 = YUV420P
         0x01 = YUVA420P
+
+        Default ColorType definition can be replaced by user if needed.
     0006-0007 Framerate(uint8)
     0007-0008 maxPacketSize(uint8)
-    0008-0010 maxScaleRadius(uint16)
-    0010-0012 maxMovingRadius(uint16)
-    0012-0016 Reserved
+    0008-0016 Reserved
     0016-0020 Width(uint32)
     0020-0024 Height(uint32)
     0024-0028 nFrame(uint32)
@@ -32,10 +32,7 @@ VideoFrameStruct
         0x0 = None(Full(key) frame)
         0x1 = Previous full frame as reference
         0x2 = Previous frame as reference
-    0005-0008 Reserved
-    0008-0010 Scale predict value(int16)
-    0010-0012 Move predict value X(int16)
-    0012-0014 Move predict value Y(int16)
+    0005-0014 Reserved
     0014-0022 Intra predict mode for channels(uint8[8])
         Method 0 (Filter)
             0x00 = None

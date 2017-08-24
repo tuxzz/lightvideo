@@ -7,9 +7,7 @@ class MainStruct(ctypes.Structure):
         ("colorFormat", ctypes.c_ubyte),
         ("framerate", ctypes.c_ubyte),
         ("maxPacketSize", ctypes.c_ubyte),
-        ("maxScaleRadius", ctypes.c_uint16),
-        ("maxMovingRadius", ctypes.c_uint16),
-        ("_reserved_1", ctypes.c_char * 4),
+        ("_reserved_1", ctypes.c_char * 8),
         ("width", ctypes.c_uint32),
         ("height", ctypes.c_uint32),
         ("nFrame", ctypes.c_uint32),
@@ -31,10 +29,7 @@ class VideoFrameStruct(ctypes.Structure):
     _fields_ = [
         ("vfrm", ctypes.c_char * 4),
         ("referenceType", ctypes.c_ubyte),
-        ("_reserved_0", ctypes.c_char * 3),
-        ("scalePredictValue", ctypes.c_short),
-        ("movePredictValueX", ctypes.c_short),
-        ("movePredictValueY", ctypes.c_short),
+        ("_reserved_0", ctypes.c_char * 9),
         ("intraPredictModeList", ctypes.c_ubyte * 8),
         ("_reserved_1", ctypes.c_char * 10),
     ]

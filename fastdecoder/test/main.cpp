@@ -245,7 +245,7 @@ int main()
   glfwSetFramebufferSizeCallback(window, framebufferSizeCallback);
   glDebugMessageCallback(glDebugOutput, nullptr);
   glDebugMessageControl(GL_DEBUG_SOURCE_API, GL_DEBUG_TYPE_ERROR, GL_DEBUG_SEVERITY_HIGH, 0, nullptr, GL_TRUE); 
-  FILE *f = fopen("D:/codebase/lightvideo/reference/classroom.rcv", "rb");
+  FILE *f = fopen("D:/codebase/lightvideo/reference/out.rcv", "rb");
   Decoder::SeekFunc seek = [=](int64_t pos) {
     if(fseek(f, static_cast<long>(pos), SEEK_SET))
       throw IOError("Failed to seek.");

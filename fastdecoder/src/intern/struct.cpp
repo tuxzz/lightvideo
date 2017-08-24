@@ -61,7 +61,7 @@ namespace LightVideoDecoder
 
   bool verifyVFRM(const MainStruct &mainStruct, const VideoFrameStruct &vfrm)
   {
-    if(strncmp(vfrm.vfrm, "VFRM", 4) || vfrm.referenceType >= _REFERENCETYPE_ENUM_MAX || vfrm.scalePredictValue > mainStruct.maxMovingRadius || -vfrm.scalePredictValue >= static_cast<int64_t>(std::min(mainStruct.width, mainStruct.height)) || vfrm.movePredictValueX > mainStruct.maxScaleRadius || vfrm.movePredictValueY > mainStruct.maxScaleRadius)
+    if(strncmp(vfrm.vfrm, "VFRM", 4) || vfrm.referenceType >= _REFERENCETYPE_ENUM_MAX)
     {
       critical("Video frame struct is broken.");
       return false;

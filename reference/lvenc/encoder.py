@@ -32,8 +32,6 @@ class Encoder:
         self.colorFormat = colorFormat
 
         minDim = min(width, height)
-        self.maxScaleRadius = int(kwargs.get("maxScaleRadius", min(32767, minDim // 16)))
-        self.maxMovingRadius = int(kwargs.get("maxMovingRadius", min(32767, minDim // 16)))
         self.maxPacketSize = int(kwargs.get("maxPacketSize", max(1, int(np.ceil(framerate / 10)))))
         self.dropThreshold = int(kwargs.get("dropThreshold", 1 if colorFormat in COLOR_LDR else 128))
 
@@ -46,14 +44,6 @@ class Encoder:
             raise ValueError("framerate must be in range [1, 255]")
         if(not (self.colorFormat in COLOR_LDR or self.colorFormat in COLOR_HDR)):
             raise ValueError("Invalid colorFormat %s" % (str(self.colorFormat)))
-
-        sInvalid = self.maxScaleRadius < 0 or self.maxScaleRadius > 32767
-        mInvalid = self.maxMovingRadius < 0 or self.maxMovingRadius > 32767
-        if(sInvalid or mInvalid):
-            raise ValueError("Scale radius and moving radius must be in range [0, 32767].")
-
-        if(self.maxScaleRadius >= min(self.width, self.height)):
-            raise ValueError("Scale radius must be less than both width and height.")
 
         if(self.maxPacketSize <= 0 or self.maxPacketSize > 255):
             raise ValueError("maxPacketSize must be in range [1, 255].")
@@ -73,8 +63,6 @@ class Encoder:
         self.packetBuffer = io.BytesIO()
         self.onBufferFrameCount = 0
         self.onBufferFullFrameCount = 0
-        self.realMaxScaleRadius = 0
-        self.realMaxMovingRadius = 0
 
         self.frameCount = 0
         self.flushQueue = []
@@ -93,8 +81,6 @@ class Encoder:
             mainStruct.colorFormat = self.colorFormat
             mainStruct.framerate = self.framerate
             mainStruct.maxPacketSize = self.maxPacketSize
-            mainStruct.maxScaleRadius = self.realMaxScaleRadius
-            mainStruct.maxMovingRadius = self.realMaxMovingRadius
             mainStruct.width = self.width
             mainStruct.height = self.height
             mainStruct.nFrame = self.frameCount
@@ -155,19 +141,13 @@ class Encoder:
         del i, currChannel
 
         # do filter
-        result = enccore.applyBestFilterOnChannels(channelList, self.prevFullChannelList, self.prevChannelList, self.maxScaleRadius, self.maxMovingRadius, self.dropThreshold)
+        result = enccore.applyBestFilterOnChannels(channelList, self.prevFullChannelList, self.prevChannelList, self.dropThreshold)
         channelResultList = result["resultList"]
 
         # send to packet buffer
         videoFrame = VideoFrameStruct()
         videoFrame.vfrm = b'VFRM'
         videoFrame.referenceType = result["deltaMode"]
-        if(result["deltaMode"] != REFERENCE_NONE):
-            videoFrame.scalePredictValue = channelResultList[0]["scale"]
-            videoFrame.movePredictValueX = channelResultList[0]["moveX"]
-            videoFrame.movePredictValueY = channelResultList[0]["moveY"]
-            self.realMaxScaleRadius = max(abs(videoFrame.scalePredictValue), self.realMaxScaleRadius)
-            self.realMaxMovingRadius = max(max(abs(videoFrame.movePredictValueX), abs(videoFrame.movePredictValueY)), self.realMaxMovingRadius)
         with DelayedKeyboardInterrupt():
             if(result["deltaMode"] == REFERENCE_NONE):
                 self.onBufferFullFrameCount += 1

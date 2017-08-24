@@ -43,9 +43,7 @@ namespace LightVideoDecoder
     ColorFormat colorFormat;
     uint8_t framerate;
     uint8_t maxPacketSize;
-    uint16_t maxScaleRadius;
-    uint16_t maxMovingRadius;
-    char _reserved_1[4];
+    char _reserved_1[8];
     uint32_t width, height;
     uint32_t nFrame;
     char _reserved_2[4];
@@ -65,9 +63,7 @@ namespace LightVideoDecoder
   {
     char vfrm[4];
     ReferenceType referenceType;
-    char _reserved_0[3];
-    int16_t scalePredictValue;
-    int16_t movePredictValueX, movePredictValueY;
+    char _reserved_0[9];
     IntraPredictMode intraPredictModeList[8];
     char _reserved_1[10];
   };
