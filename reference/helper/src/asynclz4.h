@@ -21,6 +21,7 @@ extern "C"
   LIGHTVIDEO_EXPORT void lvGetLZ4CompressionTaskResultData(LZ4CompressionTask *task, char *dst, int dstCapacity);
   LIGHTVIDEO_EXPORT uint32_t lvGetLZ4CompressionTaskResultAdler32(LZ4CompressionTask *task);
   LIGHTVIDEO_EXPORT void lvDestroyLZ4CompressionTask(LZ4CompressionTask *task);
+  LIGHTVIDEO_EXPORT int lvDecompressLZ4(const uint8_t *data, int dataSize, uint8_t *out, int maxOutSize);
 
 #ifdef __cplusplus
 } // extern "C"

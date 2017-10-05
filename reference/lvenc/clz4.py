@@ -41,6 +41,20 @@ lvDestroyLZ4CompressionTask = dll.lvDestroyLZ4CompressionTask
 lvDestroyLZ4CompressionTask.argtypes = [_pLZ4CompressionTask]
 lvDestroyLZ4CompressionTask.restype = None
 
+lvDecompressLZ4 = dll.lvDecompressLZ4
+lvDecompressLZ4.argtypes = [ctypes.c_char_p, ctypes.c_int, ctypes.c_char_p, ctypes.c_int]
+lvDecompressLZ4.restype = ctypes.c_int
+
+def decompressLZ4(data, decompressedSize):
+    assert decompressedSize > 0
+    assert isinstance(data, bytes)
+    assert len(data) > 0
+    out = ctypes.create_string_buffer(decompressedSize)
+    realDecompressedSize = lvDecompressLZ4(data, len(data), out, decompressedSize)
+    if(realDecompressedSize != decompressedSize):
+        raise ValueError("Invalid decompressedSize(expected %d, got %d)" % (decompressedSize, realDecompressedSize))
+    return out.raw
+
 class LZ4CompressionTask:
     def __init__(self, data, mode, level, calcAdler32 = False):
         self.task = None

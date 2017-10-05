@@ -33,12 +33,6 @@
     <ClCompile Include="src\intern\resampler.cpp">
       <Filter>Source</Filter>
     </ClCompile>
-    <ClCompile Include="src\intern\decoder.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
-    <ClCompile Include="src\intern\decoderutil.cpp">
-      <Filter>Source</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\intern\lz4.h">
@@ -74,19 +68,7 @@
     <ClInclude Include="src\resampler.hpp">
       <Filter>Header</Filter>
     </ClInclude>
-    <ClInclude Include="src\decoder.h">
-      <Filter>Header</Filter>
-    </ClInclude>
     <ClInclude Include="src\intern\struct.hpp">
-      <Filter>Header\intern</Filter>
-    </ClInclude>
-    <ClInclude Include="src\intern\imagechannel.hpp">
-      <Filter>Header\intern</Filter>
-    </ClInclude>
-    <ClInclude Include="src\intern\decoderutil.hpp">
-      <Filter>Header\intern</Filter>
-    </ClInclude>
-    <ClInclude Include="src\intern\colorformat.hpp">
       <Filter>Header\intern</Filter>
     </ClInclude>
   </ItemGroup>

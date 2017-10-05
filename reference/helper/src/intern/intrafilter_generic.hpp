@@ -36,13 +36,14 @@ namespace LightVideo
     lvFree(workMem);
   }
 
-  template<typename T>static inline void defilterSubTop(T *data, int width, int height)
+  template<typename T>static inline void defilterSubTop(T *data, int width, int height, int bpp)
   {
     static_assert(std::is_same<T, uint8_t>::value || std::is_same<T, uint16_t>::value, "unsupported data type");
+    lvAssert(bpp > 0 && bpp <= 4, "bpp must be in range [1, 4]");
     for(int y = 1; y < height; ++y)
     {
-      for(int x = 0; x < width; ++x)
-        data[y * width + x] += data[(y - 1) * width + x];
+      for(int xb = 0; xb < width * bpp; ++xb)
+        data[y * width * bpp + xb] += data[(y - 1) * width * bpp + xb];
     }
   }
 
@@ -80,23 +81,17 @@ namespace LightVideo
     }
   }
 
-  template<typename T>static inline void defilterSubLeft(T *data, int width, int height)
+  template<typename T>static inline void defilterSubLeft(T *data, int width, int height, int bpp)
   {
     static_assert(std::is_same<T, uint8_t>::value || std::is_same<T, uint16_t>::value, "unsupported data type");
-    for(int y = 0; y < height - height % 4; y += 4)
+    lvAssert(bpp > 0 && bpp <= 4, "bpp must be in range [1, 4]");
+    for(int b = 0; b < bpp; ++b)
     {
-      for(int x = 1; x < width; ++x)
+      for(int y = 0; y < height; ++y)
       {
-        data[(y + 0) * width + x] += data[(y + 0) * width + (x - 1)];
-        data[(y + 1) * width + x] += data[(y + 1) * width + (x - 1)];
-        data[(y + 2) * width + x] += data[(y + 2) * width + (x - 1)];
-        data[(y + 3) * width + x] += data[(y + 3) * width + (x - 1)];
+        for(int xb = b + bpp; xb < width * bpp; xb += bpp)
+          data[y * width * bpp + xb] += data[y * width * bpp + (xb - bpp)];
       }
-    }
-    for(int y = height - height % 4; y < height; ++y)
-    {
-      for(int x = 1; x < width; ++x)
-        data[y * width + x] += data[y * width + (x - 1)];
     }
   }
 
@@ -140,15 +135,19 @@ namespace LightVideo
     lvFree(workMem);
   }
 
-  template<typename T>static inline void defilterSubAvg(T *data, int width, int height)
+  template<typename T>static inline void defilterSubAvg(T *data, int width, int height, int bpp)
   {
     static_assert(std::is_same<T, uint8_t>::value || std::is_same<T, uint16_t>::value, "unsupported data type");
-    for(int y = 1; y < height; ++y)
+    lvAssert(bpp > 0 && bpp <= 4, "bpp must be in range [1, 4]");
+    for(int b = 0; b < bpp; ++b)
     {
-      for(int x = 1; x < width; ++x)
+      for(int y = 1; y < height; ++y)
       {
-        T avg = (static_cast<unsigned int>(data[(y - 1) * width + x]) + static_cast<unsigned int>(data[y * width + x - 1])) / 2;
-        data[y * width + x] += avg;
+        for(int xb = b + bpp; xb < width * bpp; xb += bpp)
+        {
+          T avg = (static_cast<unsigned int>(data[(y - 1) * width * bpp + xb]) + static_cast<unsigned int>(data[y * width * bpp + xb - bpp])) / 2;
+          data[y * width * bpp + xb] += avg;
+        }
       }
     }
   }
@@ -209,21 +208,25 @@ namespace LightVideo
     lvFree(workMem);
   }
 
-  template<typename T>static inline void defilterSubPaeth(T *data, int width, int height)
+  template<typename T>static inline void defilterSubPaeth(T *data, int width, int height, int bpp)
   {
     static_assert(std::is_same<T, uint8_t>::value || std::is_same<T, uint16_t>::value, "unsupported data type");
-    for(int y = 1; y < height; ++y)
+    lvAssert(bpp > 0 && bpp <= 4, "bpp must be in range [1, 4]");
+    for(int b = 0; b < bpp; ++b)
     {
-      auto left = data[y * width];
-      auto lu = data[(y - 1) * width];
-      for(int x = 1; x < width; ++x)
+      for(int y = 1; y < height; ++y)
       {
-        auto up = data[(y - 1) * width + x];
-        auto filtered = paeth(left, up, lu);
-        uint8_t v = data[y * width + x] + filtered;
-        data[y * width + x] = v;
-        left = v;
-        lu = up;
+        auto left = data[y * width * bpp + b];
+        auto lu = data[(y - 1) * width * bpp + b];
+        for(int xb = b + bpp; xb < width * bpp; xb += bpp)
+        {
+          auto up = data[(y - 1) * width * bpp + xb];
+          auto filtered = paeth(left, up, lu);
+          uint8_t v = data[y * width * bpp + xb] + filtered;
+          data[y * width * bpp + xb] = v;
+          left = v;
+          lu = up;
+        }
       }
     }
   }

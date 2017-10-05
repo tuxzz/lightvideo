@@ -238,3 +238,6 @@ void lvDestroyLZ4CompressionTask(LZ4CompressionTask *task)
   lvFree(task->resultCache.compressedData);
   delete task;
 }
+
+int lvDecompressLZ4(const uint8_t *data, int dataSize, uint8_t *out, int maxOutSize)
+{ return LZ4_decompress_safe(reinterpret_cast<const char*>(data), reinterpret_cast<char*>(out), dataSize, maxOutSize); }

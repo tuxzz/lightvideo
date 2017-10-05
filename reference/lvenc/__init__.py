@@ -1,4 +1,4 @@
 from .encoder import Encoder
-from .decoder import Decoder
+from .deccore import DecoderCore
 from . import struct
 from .cyuv import YUVPToRGBI, RGBIToYUVP

@@ -12,8 +12,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\intern\asynclz4.cpp" />
-    <ClCompile Include="src\intern\decoder.cpp" />
-    <ClCompile Include="src\intern\decoderutil.cpp" />
     <ClCompile Include="src\intern\intrafilter.cpp" />
     <ClCompile Include="src\intern\lz4.c" />
     <ClCompile Include="src\intern\lz4hc.c" />
@@ -23,10 +21,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\asynclz4.h" />
-    <ClInclude Include="src\decoder.h" />
-    <ClInclude Include="src\intern\colorformat.hpp" />
-    <ClInclude Include="src\intern\decoderutil.hpp" />
-    <ClInclude Include="src\intern\imagechannel.hpp" />
     <ClInclude Include="src\intern\intrafilter_generic.hpp" />
     <ClInclude Include="src\intern\privateutil.hpp" />
     <ClInclude Include="src\intern\struct.hpp" />
