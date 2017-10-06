@@ -92,27 +92,29 @@ class Encoder:
         assert fullImg is not None or halfImg is not None
         
         report.enter("frame %d" % self.nFrame)
+        if(fullImg is not None and halfImg is not None):
+            iFull = 0
+            iHalf = 1
+            imgList = [fullImg, halfImg]
+        elif(fullImg is not None):
+            iFull = 0
+            imgList = [fullImg]
+        else:
+            iHalf = 1
+            imgList = [halfImg]
 
         # do filter
-        imgList = []
-        if(fullImg is not None):
-            imgList.append(fullImg)
-        if(halfImg is not None):
-            imgList.append(halfImg)
         result = enccore.applyBestFilter(imgList, self.prevFullImgList, self.prevImgList, self.dropThreshold)
-        cv2.imwrite("ho.png", result["bestResult"][1]["filtered"][:,:,0])
 
         # serialize and compress
         vf = VideoFrameStruct()
         vf.vfrm = b'VFRM'
         vf.referenceType = result["deltaMethod"]
-        usedIndex = 0
         if(fullImg is not None):
-            vf.intraMethod[0] = result["bestResult"][0]["intraMethod"]
-            usedIndex += 1
+            vf.intraMethod[0] = result["bestResult"][iFull]["intraMethod"]
         if(halfImg is not None):
-            vf.intraMethod[1] = result["bestResult"][usedIndex]["intraMethod"]
-        del usedIndex
+            vf.intraMethod[1] = result["bestResult"][iHalf]["intraMethod"]
+
         data = io.BytesIO()
         
         for channelResult in result["bestResult"]:

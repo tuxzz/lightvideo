@@ -82,7 +82,6 @@ class DecoderCore:
                 fullSizeChannel[:,:,:] = defilterMethod[vf.intraMethod[0]](fullSizeChannel)
         if(self.nHalfSizeChannel > 0):
             if(vf.intraMethod[1] != FILTER_NONE):
-                cv2.imwrite("uf.png", halfSizeChannel[:,:,0])
                 halfSizeChannel[:,:,:] = defilterMethod[vf.intraMethod[1]](halfSizeChannel)
         
         # defilter delta
