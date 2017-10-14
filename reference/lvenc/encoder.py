@@ -50,7 +50,7 @@ class Encoder:
         wInvalid = self.width <= 0 or self.width > 32767
         hInvalid = self.height <= 0 or self.height > 32767
         if(wInvalid or hInvalid):
-            raise ValueError("weight and height must be in range [1, 32767]")
+            raise ValueError("width and height must be in range [1, 32767]")
 
         if(self.framerate <= 0 or self.framerate > 255):
             raise ValueError("framerate must be in range [1, 255]")
@@ -126,6 +126,7 @@ class Encoder:
         with DelayedKeyboardInterrupt():
             self.stream.write(vf)
             self.stream.write(data)
+            self.nFrame += 1
 
         self.prevImgList = []
         for channelResult in result["bestResult"]:
@@ -134,5 +135,4 @@ class Encoder:
             self.prevFullImgList = self.prevImgList
 
         # clean up
-        self.nFrame += 1
         report.leave()

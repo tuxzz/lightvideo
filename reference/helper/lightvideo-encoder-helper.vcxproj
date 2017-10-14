@@ -11,6 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\intern\astcwrapper.cpp" />
     <ClCompile Include="src\intern\asynclz4.cpp" />
     <ClCompile Include="src\intern\intrafilter.cpp" />
     <ClCompile Include="src\intern\lz4.c" />
@@ -20,7 +21,9 @@
     <ClCompile Include="src\intern\yuv.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\astcwrapper.h" />
     <ClInclude Include="src\asynclz4.h" />
+    <ClInclude Include="src\intern\astc.h" />
     <ClInclude Include="src\intern\intrafilter_generic.hpp" />
     <ClInclude Include="src\intern\privateutil.hpp" />
     <ClInclude Include="src\intern\struct.hpp" />
@@ -84,6 +87,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <ShowProgress>NotSet</ShowProgress>
+      <AdditionalDependencies>libastcenc.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -114,6 +118,7 @@
       <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
       <SetChecksum>true</SetChecksum>
       <ShowProgress>NotSet</ShowProgress>
+      <AdditionalDependencies>libastcenc.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

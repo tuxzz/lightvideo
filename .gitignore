@@ -378,4 +378,5 @@ CMakeLists.txt.user*
 *.png
 *.bmp
 *.rcv
+*.acv
 *.db

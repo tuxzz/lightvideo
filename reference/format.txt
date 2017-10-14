@@ -1,31 +1,52 @@
-Storage as Little-Endian C-Order
-MainStruct
-    0000-0004 "ARiA"(char[4])
-    0004-0005 Version(uint8)
-    0005-0006 ChannelCount(uint8)
-        Full (Lower 4-bit, uint4)
-        Half (Higher 4-bit, uint4)
-    0006_0007 Flags(uint8)
-        isHDR (1st-bit, bool)
-    0007-0008 Framerate(uint8)
-    0008-0012 Width(uint32)
-    0012-0016 Height(uint32)
-    0016-0020 nFrame(uint32)
-    0020-0024 Reserved
-    0024-0032 User Data(uint64)
-    0032-???? <FramePackets>
-VideoFrameStruct
-    0000-0004 "VFRM"(char[4])
-    0004-0005 Reference Type(uint8)
-        0x00 = None(Full(key) frame)
-        0x01 = Previous full frame as reference
-        0x02 = Previous frame as reference
-    0005-0007 Intra predict method for FullSizeChannel and HalfSizeChannel(uint8[2])
-        0x00 = None
-        0x01 = SubTop
-        0x02 = SubLeft
-        0x03 = SubAvg
-        0x04 = SubPaeth
-    0007-0012 Reserved
-    0012-0016 Size(uint32)
-    0016-???? <Data>
+Normal Mode
+    Storage as Little-Endian C-Order
+    MainStruct
+        0000-0004 "ARiA"(char[4])
+        0004-0005 Version(uint8)
+        0005-0006 ChannelCount(uint8)
+            Full (Lower 4-bit, uint4, in range[0, 4])
+            Half (Higher 4-bit, uint4, in range[0, 4])
+        0006_0007 Flags(uint8)
+            isHDR (1st-bit, bool)
+        0007-0008 Framerate(uint8)
+        0008-0012 Width(uint32)
+        0012-0016 Height(uint32)
+        0016-0020 nFrame(uint32)
+        0020-0024 Reserved
+        0024-0032 User Data(uint64)
+        0032-???? <VideoFrameStructs>
+    VideoFrameStruct
+        0000-0004 "VFRM"(char[4])
+        0004-0005 Reference Type(uint8)
+            0x00 = None(Full(key) frame)
+            0x01 = Previous full frame as reference
+            0x02 = Previous frame as reference
+        0005-0007 Intra predict method for FullSizeChannel and HalfSizeChannel(uint8[2])
+            0x00 = None
+            0x01 = SubTop
+            0x02 = SubLeft
+            0x03 = SubAvg
+            0x04 = SubPaeth
+        0007-0012 Reserved
+        0012-0016 Size(uint32)
+        0016-???? <Data>
+
+ASTC Mode
+    Storage as Little-Endian C-Order
+    MainStruct
+        0000-0005 SPiCa
+        0005-0006 Version(uint8)
+        0006-0007 ChannelCount(uint8, in range [1, 4])
+        0007-0008 Framerate(uint8)
+        0008-0009 Block Size Mode(uint8)
+        0009-0016 Reserved
+        0016-0018 Width(uint16)
+        0018-0020 Height(uint16)
+        0020-0024 nFrame(uint32)
+        0024-0032 User Data(uint64)
+        0032-???? <VideoFrameStructs>
+    VideoFrameStruct
+        0000-0004 "VFrM"(char[4])
+        0004-0008 Size(uint32)
+        0008-0016 Reserved
+        0016-???? <Data>

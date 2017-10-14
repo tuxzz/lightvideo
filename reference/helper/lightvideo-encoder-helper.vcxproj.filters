@@ -33,6 +33,9 @@
     <ClCompile Include="src\intern\resampler.cpp">
       <Filter>Source</Filter>
     </ClCompile>
+    <ClCompile Include="src\intern\astcwrapper.cpp">
+      <Filter>Source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\intern\lz4.h">
@@ -69,6 +72,12 @@
       <Filter>Header</Filter>
     </ClInclude>
     <ClInclude Include="src\intern\struct.hpp">
+      <Filter>Header\intern</Filter>
+    </ClInclude>
+    <ClInclude Include="src\astcwrapper.h">
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="src\intern\astc.h">
       <Filter>Header\intern</Filter>
     </ClInclude>
   </ItemGroup>
