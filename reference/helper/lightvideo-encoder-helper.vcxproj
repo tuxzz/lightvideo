@@ -25,6 +25,7 @@
     <ClInclude Include="src\asynclz4.h" />
     <ClInclude Include="src\intern\astc.h" />
     <ClInclude Include="src\intern\intrafilter_generic.hpp" />
+    <ClInclude Include="src\intern\intrafilter_sse.hpp" />
     <ClInclude Include="src\intern\privateutil.hpp" />
     <ClInclude Include="src\intern\struct.hpp" />
     <ClInclude Include="src\intern\yuv_generic.hpp" />

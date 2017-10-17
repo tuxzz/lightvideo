@@ -80,5 +80,8 @@
     <ClInclude Include="src\intern\astc.h">
       <Filter>Header\intern</Filter>
     </ClInclude>
+    <ClInclude Include="src\intern\intrafilter_sse.hpp">
+      <Filter>Header\intern</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -39,7 +39,7 @@ namespace LightVideo
   template<typename T>static inline void defilterSubTop(T *data, int width, int height, int bpp)
   {
     static_assert(std::is_same<T, uint8_t>::value || std::is_same<T, uint16_t>::value, "unsupported data type");
-    lvAssert(bpp > 0 && bpp <= 4, "bpp must be in range [1, 4]");
+    lvAssert(bpp >= 1 && bpp <= 8 && bpp != 5 && bpp != 7, "bpp must be in {1, 2, 3, 4, 6, 8}");
     for(int y = 1; y < height; ++y)
     {
       for(int xb = 0; xb < width * bpp; ++xb)
@@ -84,15 +84,85 @@ namespace LightVideo
   template<typename T>static inline void defilterSubLeft(T *data, int width, int height, int bpp)
   {
     static_assert(std::is_same<T, uint8_t>::value || std::is_same<T, uint16_t>::value, "unsupported data type");
-    lvAssert(bpp > 0 && bpp <= 4, "bpp must be in range [1, 4]");
-    for(int b = 0; b < bpp; ++b)
+    lvAssert(bpp >= 1 && bpp <= 8 && bpp != 5 && bpp != 7, "bpp must be in {1, 2, 3, 4, 6, 8}");
+    if(bpp == 1)
     {
       for(int y = 0; y < height; ++y)
       {
-        for(int xb = b + bpp; xb < width * bpp; xb += bpp)
-          data[y * width * bpp + xb] += data[y * width * bpp + (xb - bpp)];
+        for(int x = 1; x < width; ++x)
+          data[y * width + x] += data[y * width + (x - 1)];
       }
     }
+    else if(bpp == 2)
+    {
+      for(int y = 0; y < height; ++y)
+      {
+        for(int xb = 2; xb < width * 2; xb += 2)
+        {
+          data[y * width * 2 + xb] += data[y * width * 2 + (xb - 2)];
+          data[y * width * 2 + (xb + 1)] += data[y * width * 2 + (xb - 1)];
+        }
+      }
+    }
+    else if(bpp == 3)
+    {
+      for(int y = 0; y < height; ++y)
+      {
+        for(int xb = 3; xb < width * 3; xb += 3)
+        {
+          data[y * width * 3 + xb] += data[y * width * 3 + (xb - 3)];
+          data[y * width * 3 + (xb + 1)] += data[y * width * 3 + (xb - 2)];
+          data[y * width * 3 + (xb + 2)] += data[y * width * 3 + (xb - 1)];
+        }
+      }
+    }
+    else if(bpp == 4)
+    {
+      for(int y = 0; y < height; ++y)
+      {
+        for(int xb = 4; xb < width * 4; xb += 4)
+        {
+          data[y * width * 4 + xb] += data[y * width * 4 + (xb - 4)];
+          data[y * width * 4 + (xb + 1)] += data[y * width * 4 + (xb - 3)];
+          data[y * width * 4 + (xb + 2)] += data[y * width * 4 + (xb - 2)];
+          data[y * width * 4 + (xb + 3)] += data[y * width * 4 + (xb - 1)];
+        }
+      }
+    }
+    else if(bpp == 6)
+    {
+      for(int y = 0; y < height; ++y)
+      {
+        for(int xb = 6; xb < width * 6; xb += 6)
+        {
+          data[y * width * 6 + xb] += data[y * width * 6 + (xb - 6)];
+          data[y * width * 6 + (xb + 1)] += data[y * width * 6 + (xb - 5)];
+          data[y * width * 6 + (xb + 2)] += data[y * width * 6 + (xb - 4)];
+          data[y * width * 6 + (xb + 3)] += data[y * width * 6 + (xb - 3)];
+          data[y * width * 6 + (xb + 4)] += data[y * width * 6 + (xb - 2)];
+          data[y * width * 6 + (xb + 5)] += data[y * width * 6 + (xb - 1)];
+        }
+      }
+    }
+    else if(bpp == 8)
+    {
+      for(int y = 0; y < height; ++y)
+      {
+        for(int xb = 8; xb < width * 8; xb += 8)
+        {
+          data[y * width * 8 + xb] += data[y * width * 8 + (xb - 8)];
+          data[y * width * 8 + (xb + 1)] += data[y * width * 8 + (xb - 7)];
+          data[y * width * 8 + (xb + 2)] += data[y * width * 8 + (xb - 6)];
+          data[y * width * 8 + (xb + 3)] += data[y * width * 8 + (xb - 5)];
+          data[y * width * 8 + (xb + 4)] += data[y * width * 8 + (xb - 4)];
+          data[y * width * 8 + (xb + 5)] += data[y * width * 8 + (xb - 3)];
+          data[y * width * 8 + (xb + 6)] += data[y * width * 8 + (xb - 2)];
+          data[y * width * 8 + (xb + 7)] += data[y * width * 8 + (xb - 1)];
+        }
+      }
+    }
+    else
+      std::abort();
   }
 
   template<typename T>static inline void filterSubAvg(T *data, int width, int height, T threshold)
@@ -138,16 +208,14 @@ namespace LightVideo
   template<typename T>static inline void defilterSubAvg(T *data, int width, int height, int bpp)
   {
     static_assert(std::is_same<T, uint8_t>::value || std::is_same<T, uint16_t>::value, "unsupported data type");
-    lvAssert(bpp > 0 && bpp <= 4, "bpp must be in range [1, 4]");
-    for(int b = 0; b < bpp; ++b)
+    lvAssert(bpp >= 1 && bpp <= 8 && bpp != 5 && bpp != 7, "bpp must be in {1, 2, 3, 4, 6, 8}");
+    const int wb = width * bpp;
+    for(int y = 1; y < height; ++y)
     {
-      for(int y = 1; y < height; ++y)
+      for(int xb = bpp; xb < wb; ++xb)
       {
-        for(int xb = b + bpp; xb < width * bpp; xb += bpp)
-        {
-          T avg = (static_cast<unsigned int>(data[(y - 1) * width * bpp + xb]) + static_cast<unsigned int>(data[y * width * bpp + xb - bpp])) / 2;
-          data[y * width * bpp + xb] += avg;
-        }
+        uint8_t avg = (static_cast<unsigned int>(data[(y - 1) * wb + xb]) + static_cast<unsigned int>(data[y * wb + (xb - bpp)])) / 2;
+        data[y * wb + xb] += avg;
       }
     }
   }
@@ -211,7 +279,7 @@ namespace LightVideo
   template<typename T>static inline void defilterSubPaeth(T *data, int width, int height, int bpp)
   {
     static_assert(std::is_same<T, uint8_t>::value || std::is_same<T, uint16_t>::value, "unsupported data type");
-    lvAssert(bpp > 0 && bpp <= 4, "bpp must be in range [1, 4]");
+    lvAssert(bpp >= 1 && bpp <= 8 && bpp != 5 && bpp != 7, "bpp must be in {1, 2, 3, 4, 6, 8}");
     for(int b = 0; b < bpp; ++b)
     {
       for(int y = 1; y < height; ++y)
