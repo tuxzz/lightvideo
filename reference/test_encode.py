@@ -6,16 +6,16 @@ import pickle
 
 def main():
     inputFileList = []
-    #for root, dirList, fileList in os.walk("./work/3p"):
-    for root, dirList, fileList in os.walk("./work/ARiASeq"):
+    for root, dirList, fileList in os.walk("./work/3p"):
+    #for root, dirList, fileList in os.walk("./work/ARiASeq"):
         for fileName in fileList:
             path = os.path.join(root, fileName)
             if(os.path.splitext(fileName)[-1].lower() == ".png"):
                 inputFileList.append(path)
             else:
                 print("Ignored", path)
-    #inputFileList.sort(key = lambda x:int(os.path.splitext(os.path.basename(x))[0]))
-    inputFileList.sort()
+    inputFileList.sort(key = lambda x:int(os.path.splitext(os.path.basename(x))[0]))
+    #inputFileList.sort()
     h, w = cv2.imread(inputFileList[0]).shape[:2]
     with open("out.rcv", "wb") as f:
         with lvenc.Encoder(f, w, h, 24, np.uint8, 1, 2, dropThreshold = 1) as enc:

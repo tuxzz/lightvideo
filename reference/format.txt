@@ -22,11 +22,19 @@ Normal Mode
             0x01 = Previous full frame as reference
             0x02 = Previous frame as reference
         0005-0007 Intra predict method for FullSizeChannel and HalfSizeChannel(uint8[2])
+            Note: Ex version of SubTop is useless
             0x00 = None
             0x01 = SubTop
             0x02 = SubLeft
             0x03 = SubAvg
-            0x04 = SubPaeth
+            0x12 = SubLeftEx2
+            0x22 = SubLeftEx4
+            0x32 = SubLeftEx6
+            0x42 = SubLeftEx8
+            0x13 = SubAvgEx2
+            0x23 = SubAvgEx4
+            0x33 = SubAvgEx6
+            0x43 = SubAvgEx8
         0007-0012 Reserved
         0012-0016 Size(uint32)
         0016-???? <Data>

@@ -4,6 +4,19 @@ import cv2
 from . import cfilter, clz4
 from .struct import *
 
+def _addEx(defilterMethodDict, baseMethod, baseDefilter):
+    EX2, EX4, EX6, EX8 = 0x10, 0x20, 0x30, 0x40
+    defilterMethodDict[baseMethod] = baseDefilter
+    defilterMethodDict[baseMethod | EX2] = lambda x:cfilter.defilterEx(baseDefilter, x, 2)
+    defilterMethodDict[baseMethod | EX4] = lambda x:cfilter.defilterEx(baseDefilter, x, 4)
+    defilterMethodDict[baseMethod | EX6] = lambda x:cfilter.defilterEx(baseDefilter, x, 6)
+    defilterMethodDict[baseMethod | EX8] = lambda x:cfilter.defilterEx(baseDefilter, x, 8)
+
+defilterMethodDict = {}
+_addEx(defilterMethodDict, FILTER_SUBTOP, cfilter.defilterSubTop)
+_addEx(defilterMethodDict, FILTER_SUBLEFT, cfilter.defilterSubLeft)
+_addEx(defilterMethodDict, FILTER_SUBAVG, cfilter.defilterSubAvg)
+del _addEx
 
 class DecoderCore:
     def __init__(self, stream):
@@ -51,10 +64,8 @@ class DecoderCore:
         if(not vf.referenceType in (REFERENCE_NONE, REFERENCE_PREVFULL, REFERENCE_PREV)):
             raise ValueError("Invalid referenceType(got 0x%s)" % hex(vf.referenceType))
         
-        intraMethodList = (FILTER_NONE, FILTER_SUBTOP, FILTER_SUBLEFT, FILTER_SUBAVG, FILTER_SUBPAETH)
-        if(not (vf.intraMethod[0] in intraMethodList and vf.intraMethod[1] in intraMethodList)):
+        if(not (vf.intraMethod[0] in intraFilterMethodStr and vf.intraMethod[1] in intraFilterMethodStr)):
            raise ValueError("Invalid intra filter method")
-        del intraMethodList
         
         # decompress video frame data
         h, w = self.height, self.width
@@ -76,13 +87,12 @@ class DecoderCore:
         del iRead
 
         # defilter intra
-        defilterMethod = (None, cfilter.defilterSubTop, cfilter.defilterSubLeft, cfilter.defilterSubAvg, cfilter.defilterSubPaeth)
         if(self.nFullSizeChannel > 0):
             if(vf.intraMethod[0] != FILTER_NONE):
-                fullSizeChannel[:,:,:] = defilterMethod[vf.intraMethod[0]](fullSizeChannel)
+                fullSizeChannel[:,:,:] = defilterMethodDict[vf.intraMethod[0]](fullSizeChannel)
         if(self.nHalfSizeChannel > 0):
             if(vf.intraMethod[1] != FILTER_NONE):
-                halfSizeChannel[:,:,:] = defilterMethod[vf.intraMethod[1]](halfSizeChannel)
+                halfSizeChannel[:,:,:] = defilterMethodDict[vf.intraMethod[1]](halfSizeChannel)
         
         # defilter delta
         if(vf.referenceType == REFERENCE_PREVFULL):

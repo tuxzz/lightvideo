@@ -143,3 +143,22 @@ def defilterSubAvg(data):
 
 def defilterSubPaeth(data):
     return _callDefilter(lvDefilterSubPaeth8, lvDefilterSubPaeth16, data)
+
+def filterEx(func, img, multiply, dropThreshold):
+    h, w, nChannel = img.shape
+    if(not nChannel * multiply in (4, 6, 8)):
+        raise ValueError("invalid multiply")
+    if(w % multiply != 0):
+        raise ValueError("cannot divide image with specify multiply")
+    newImg = img.reshape(h, w // multiply, nChannel * multiply)
+    return func(newImg, dropThreshold).reshape(h, w, nChannel)
+
+import cv2
+def defilterEx(func, img, multiply):
+    h, w, nChannel = img.shape
+    if(not nChannel * multiply in (4, 6, 8)):
+        raise ValueError("invalid multiply")
+    if(w % multiply != 0):
+        raise ValueError("cannot divide image with specify multiply")
+    newImg = img.reshape(h, w // multiply, nChannel * multiply)
+    return func(newImg).reshape(h, w, nChannel)
